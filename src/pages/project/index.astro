@@ -1,0 +1,50 @@
+---
+import PageLayout from '@/layouts/BaseLayout.astro'
+import Button from '@/components/Button.astro'
+import { getAllProjects } from 'src/utils/project'
+import ProjectCard from '@/components/ProjectCard.astro'
+import type { Asset } from 'contentful'
+
+const allProjects = await getAllProjects()
+---
+
+<PageLayout meta={{ title: 'Projects' }}>
+	<div class='w-full'>
+		<Button title='Back' href='/' style='button'>
+			<svg
+				xmlns='http://www.w3.org/2000/svg'
+				width='14'
+				height='14'
+				viewBox='0 0 24 24'
+				slot='icon-before'
+			>
+				<path
+					fill='currentColor'
+					d='m6.921 12.5l5.792 5.792L12 19l-7-7l7-7l.713.708L6.921 11.5H19v1z'
+				>
+				</path>
+			</svg>
+		</Button>
+
+		<div class='mt-5 flex w-full flex-col gap-y-5'>
+			<div>
+				<h1 class='text-2xl font-bold'>Projects</h1>
+			</div>
+			<div class='flex flex-col gap-y-3 sm:flex-row sm:gap-x-3 sm:gap-y-0'>
+				{
+					allProjects.items.map((item) => (
+						<ProjectCard
+							href={`/project/${item.fields.slug}`}
+							heading={item.fields.title}
+							subheading={item.fields.description}
+							imagePath='/src/assets/coming-soon.png'
+							imageUrl={item.fields.cover && (item.fields.cover as Asset).fields.file?.url}
+							altText='Example'
+							class='w-full sm:w-1/2'
+						/>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</PageLayout>

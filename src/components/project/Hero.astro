@@ -1,0 +1,61 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { Image } from 'astro:assets'
+import FormattedDate from '../FormattedDate.astro'
+import type { Asset, Entry } from 'contentful'
+import type { Project } from 'src/lib/contentful'
+
+// interface Props {
+// 	content: CollectionEntry<'post'>
+// }
+
+interface Props {
+	content: Entry<Project, undefined>
+}
+
+const { content } = Astro.props
+
+const cover = content.fields.cover as Asset
+const publishDate = new Date(content.fields.publishDate)
+// const title = content.fields.title
+const { title } = content.fields
+const updatedDate = new Date(content.fields.updatedDate ?? content.fields.publishDate)
+
+const dateTimeOptions: Intl.DateTimeFormatOptions = {
+	month: 'long'
+}
+---
+
+{
+	cover && (
+		<div class='aspect-h-9 aspect-w-16 mb-6'>
+			<Image
+				alt={(cover.fields.title ?? '').toString()}
+				class='rounded-2xl object-cover'
+				fetchpriority='high'
+				loading='eager'
+				src={(cover.fields.file?.url ?? '').toString()}
+				width={100}
+				height={100}
+			/>
+		</div>
+	)
+}
+
+<div class='flex flex-wrap items-center gap-x-3 gap-y-2'>
+	<p class='text-xs'>
+		<FormattedDate date={publishDate} dateTimeOptions={dateTimeOptions} />
+	</p>
+</div>
+<h1 class='mt-2 text-3xl font-medium sm:mb-1'>
+	{title}
+</h1>
+
+{
+	updatedDate && (
+		<p class='mt-6 text-base'>
+			Last Updated:
+			<FormattedDate class='ms-1' date={updatedDate} dateTimeOptions={dateTimeOptions} />
+		</p>
+	)
+}

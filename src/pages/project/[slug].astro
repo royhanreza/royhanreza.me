@@ -1,0 +1,24 @@
+---
+export const prerender = true
+
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro'
+
+import ProjectLayout from '@/layouts/Project.astro'
+import { getAllProjects } from 'src/utils/project'
+
+export const getStaticPaths = (async () => {
+	const { items } = await getAllProjects()
+	return items.map((item) => ({
+		params: { slug: item.fields.slug },
+		props: {
+			item
+		}
+	}))
+}) satisfies GetStaticPaths
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>
+
+const { item } = Astro.props
+---
+
+<ProjectLayout project={item} />
